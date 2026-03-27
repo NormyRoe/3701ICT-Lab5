@@ -6,10 +6,19 @@ import { useState } from 'react';
 
 {/* Import components from src folder */}
 import Title from '../components/Title';
+import Label from '../components/Label';
 import TButton from '../components/TButton';
+import SButton from '../components/SButton';
+import Popup from '../components/Popup';
 import Board from '../components/Board';
 import colors from '../constants/colors';
-import { createNewGame, makeMove, is_board_empty, get_current_board } from '../datamodel/game';
+import { 
+  createNewGame, 
+  makeMove, 
+  is_board_empty, 
+  get_current_board, 
+  get_game_status 
+} from '../datamodel/game';
 
 
 
@@ -18,12 +27,46 @@ export default function Home( {navigation}) {
   // Setting the game state
   const [game, setGame] = useState(createNewGame());
 
+  // Setting the state for when the Save popup is visible
+  const [showSavePopup, setShowSavePopup] = useState(false);
+
+  // Determine status of the game
+  const status = get_game_status(game);
+
+  // Verible for whether save is enabled
+  const save_enabled = (status.state === "win" || status.state === "tie");
+
+  // Create variable for status text
+  let status_text = "";
+
+  // If the status is "playing"
+  if (status.state === "playing")
+  {
+    status_text = `${status.next} to play`;
+  }
+  // else if status is "win"
+  else if (status.state === "win") 
+  {
+    status_text = `${status.winner} wins`;    
+  } 
+  // else status is "tie"
+  else 
+  {
+    status_text = "Tie";    
+  }
+
   // Variable for disabling new game button
   const new_game_disabled = is_board_empty(get_current_board(game));
 
   // Function for when a cell is pressed
   function handleCellPress(index)
   {
+    // Prevent moves if the game is already over (win or tie)
+    if (status.state !== "playing")
+    {
+      return; // Ignore taps once the game has ended
+    }
+
     // Variable for storing the current board after move made
     const new_move = makeMove(game, index);
 
@@ -81,6 +124,20 @@ export default function Home( {navigation}) {
     }
   }
 
+  // Function to confirm save
+  function confirmSave()
+  {
+    // TODO later
+    setShowSavePopup(false);
+    setGame(createNewGame());
+
+  }
+
+  // Function to cancel save
+  function cancelSave()
+  {
+    setShowSavePopup(false);
+  }
 
 
   return (
@@ -93,7 +150,7 @@ export default function Home( {navigation}) {
         </View>
         {/* End Top Section */}
         {/* Middle Section */}
-        <View style={styles.middle_section}>
+        <View style={styles.middle_section}>          
           {/* Game Navigation Buttons */}
           <View style={styles.navRow}>
             <TButton 
@@ -115,24 +172,59 @@ export default function Home( {navigation}) {
             />            
           </View>
           {/* End Game Navigation Buttons */}
-          {/* Game Board */}
-          <Board 
-            board={get_current_board(game)}
-            onCellPress={handleCellPress}
-          />
+          {/* Adding board area */}
+          <View style={styles.board_area}>
+            {/* Game State Label */}
+            <Label text={status_text}/>
+            {/* Game Board */}
+            <Board 
+              board={get_current_board(game)}
+              onCellPress={handleCellPress}
+              winningLine={status.line}
+            />
+          </View>
+          {/* End board area */}
         </View>
         {/* End Middle Section */}
         {/* Bottom Section */}
         <View style={styles.bottom_section}>
           <View style={styles.buttonRow}>
             {/* Add Buttons */}
-            <TButton text="Rules" onPress={() => navigation.navigate("Rules")} />
-            <TButton text="Credits" onPress={() => navigation.navigate("Credits")} />
+            <TButton 
+              text="Load" 
+              size="small" 
+              onPress={() => {}} 
+            />
+            <TButton 
+              text="Save" 
+              size="small" 
+              onPress={() => setShowSavePopup(true)} 
+              disabled={!save_enabled}
+            />
+            <TButton 
+              text="Rules" 
+              size="small" 
+              onPress={() => navigation.navigate("Rules")} 
+            />
+            <TButton 
+              text="Credits" 
+              size="small" 
+              onPress={() => navigation.navigate("Credits")} 
+            />
           </View>
         </View>
         {/* End Bottom Section */}
       </View>
       {/* End Table Section */}
+      {showSavePopup && (
+        <Popup 
+          title="Save Game"
+          message="Are you sure you want to save the game?"
+        >
+          <SButton text="SAVE AND START A NEW GAME" onPress={confirmSave} />
+          <SButton text="CANCEL" onPress={cancelSave} />
+        </Popup>
+      )}
     </View>
   );
 }
@@ -176,7 +268,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 20,              // modern RN supports gap!
+    gap: 5,              // modern RN supports gap!
   },
   navRow: {
   flexDirection: "row",
@@ -186,4 +278,8 @@ const styles = StyleSheet.create({
   marginVertical: 10,
   marginBottom: 60,  // adds space at bottom
   },
+  board_area: {
+  width: "100%",        // allows Label + Board to stretch
+  alignItems: "center", // Board stays centered inside
+},
 });

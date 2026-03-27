@@ -8,7 +8,7 @@ import Cell from './Cell';
 
 
 
-export default function Board( { board, onCellPress }) {
+export default function Board( { board, onCellPress, winningLine }) {
   return (
     // Outer Board
     <View style={styles.outer_board}>
@@ -17,31 +17,31 @@ export default function Board( { board, onCellPress }) {
         {/* Row 1 */}
         <View style={styles.row}>
           {/* Row 1 - Cell 1 */}
-          <Cell value={board[0]} onPress={() => onCellPress(0)} />
+          <Cell value={board[0]} onPress={() => onCellPress(0)} highlight={winningLine.includes(0)} />
           {/* Row 1 - Cell 2 */}
-          <Cell value={board[1]} onPress={() => onCellPress(1)} />
+          <Cell value={board[1]} onPress={() => onCellPress(1)} highlight={winningLine.includes(1)} />
           {/* Row 1 - Cell 3 */}
-          <Cell value={board[2]} onPress={() => onCellPress(2)} />
+          <Cell value={board[2]} onPress={() => onCellPress(2)} highlight={winningLine.includes(2)} />
         </View>
         {/* End Row 1 */}
         {/* Row 2 */}
         <View style={styles.row}>
           {/* Row 2 - Cell 1 */}
-          <Cell value={board[3]} onPress={() => onCellPress(3)} />
+          <Cell value={board[3]} onPress={() => onCellPress(3)} highlight={winningLine.includes(3)} />
           {/* Row 2 - Cell 2 */}
-          <Cell value={board[4]} onPress={() => onCellPress(4)} />
+          <Cell value={board[4]} onPress={() => onCellPress(4)} highlight={winningLine.includes(4)} />
           {/* Row 2 - Cell 3 */}
-          <Cell value={board[5]} onPress={() => onCellPress(5)} />
+          <Cell value={board[5]} onPress={() => onCellPress(5)} highlight={winningLine.includes(5)} />
         </View>
         {/* End Row 2 */}
         {/* Row 3 */}
         <View style={styles.row}>
           {/* Row 3 - Cell 1 */}
-          <Cell value={board[6]} onPress={() => onCellPress(6)} />
+          <Cell value={board[6]} onPress={() => onCellPress(6)} highlight={winningLine.includes(6)} />
           {/* Row 3 - Cell 2 */}
-          <Cell value={board[7]} onPress={() => onCellPress(7)} />
+          <Cell value={board[7]} onPress={() => onCellPress(7)} highlight={winningLine.includes(7)} />
           {/* Row 3 - Cell 3 */}
-          <Cell value={board[8]} onPress={() => onCellPress(8)} />
+          <Cell value={board[8]} onPress={() => onCellPress(8)} highlight={winningLine.includes(8)} />
         </View>
         {/* End Row 3 */}
       </View>

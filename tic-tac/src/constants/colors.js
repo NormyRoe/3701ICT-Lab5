@@ -9,6 +9,8 @@ export default {
   boardInner: "#008000",        // green
   textLight: "#FFFFFF",         // white
   textDark: "#000000",          // black
+  highlightBackground: "yellow",
+  highlightText: "#000000",
 };
 
 /*
