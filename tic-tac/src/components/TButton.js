@@ -1,41 +1,62 @@
-import { View, StyleSheet, Text, Pressable } from "react-native";
-import colors from "../constants/colors";
-export default function TButton({
-  label,
-  fun = () => {},
-  width = 90,
-  enabled = true,
-}) {
-  return (
-    <Pressable
-      style={({ pressed }) =>
-        enabled
-          ? pressed
-            ? [styles.container, { opacity: 0.5 }, { width }]
-            : [styles.container, { width }]
-          : [styles.container, { width, backgroundColor: "#ccc" }]
-      }
-      onPress={enabled ? fun : null}
-    >
-      <Text style={styles.text}>{label}</Text>
+{/* Import libraries/Functions */}
+import { StatusBar } from 'expo-status-bar';
+import { Pressable, StyleSheet, Text } from 'react-native';
+
+
+{/* Import components from src folder */}
+import colors from '../constants/colors';
+
+
+
+export default function TButton( {text, onPress, size = "normal", disabled = false}) {
+  return (    
+    /* Adding a pressable button */
+    <Pressable 
+      style={[
+        styles.button,
+        size === "small" ? styles.small_button : styles.normal_button,
+        disabled && styles.disabled_button
+      ]}
+      onPress = {onPress}
+      disabled = {disabled}
+      >
+        <Text style={styles.button_text}>
+          {text}
+        </Text>      
     </Pressable>
+    /* End Adding a pressable button */
   );
 }
 
+
+
+
+
+{/* Style Sheets */}
 const styles = StyleSheet.create({
-  container: {
-    width: 90,
-    height: 40,
-    backgroundColor: colors.button,
-    borderWidth: 1,
-    borderColor: "black",
-    justifyContent: "center",
-    alignItems: "center",
+  button: {
+    backgroundColor: colors.buttonBackground,
     borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  text: {
-    fontSize: 15,
+  small_button: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    minWidth: 40,     // compact but still tappable
+  },
+  normal_button: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    minWidth: 120,
+  },
+  button_text: {
+    color: colors.textLight,
+    fontSize: 18,
     fontWeight: "bold",
-    color: "white",
+  },
+  disabled_button: {
+  backgroundColor: "#888", // greyed out
+  opacity: 0.6
   },
 });

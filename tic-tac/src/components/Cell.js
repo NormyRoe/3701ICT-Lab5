@@ -1,31 +1,41 @@
-import { StyleSheet, Text, Pressable } from "react-native";
 
-export default function Cell({ play, onPress }) {
+{/* Import libraries/Functions */}
+import { StyleSheet, Text, Pressable } from 'react-native';
+
+
+{/* Import components from src folder */}
+import colors from '../constants/colors';
+
+
+
+export default function Cell( {value, onPress }) {
   return (
-    <Pressable
-      style={({ pressed }) =>
-        pressed ? [styles.cell, { opacity: 0.5 }] : styles.cell
-      }
-      onPress={play ? null : onPress}
-    >
-      <Text style={styles.text}>{play}</Text>
+    // Cell View
+    <Pressable style={styles.cell} onPress={onPress}>
+        {/* Cell Text */}
+        <Text style={styles.text}>{value}</Text>
+         {/* End Cell Text */}
     </Pressable>
+    // End Cell View
   );
 }
 
+
+
+
+
+{/* Style Sheets */}
 const styles = StyleSheet.create({
-  cell: {
-    width: 80,
-    height: 80,
-    backgroundColor: "#090",
-    borderWidth: 1,
+cell: {
+    flex: 1,
+    borderWidth: 2,
     borderColor: "black",
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
   },
   text: {
-    fontSize: 30,
+    fontSize: 32,
     fontWeight: "bold",
-    color: "white",
+    color: colors.textLight,
   },
-});
+  });

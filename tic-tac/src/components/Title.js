@@ -1,27 +1,41 @@
-import { View, StyleSheet, Text } from "react-native";
-import colors from "../constants/colors";
-export default function Title({ title }) {
+{/* Import libraries/Functions */}
+import { StyleSheet, Text, View } from 'react-native';
+
+
+{/* Import components from src folder */}
+import colors from '../constants/colors';
+
+
+
+export default function Title( {text}) {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{title}</Text>
+      {/* Display Title Text */}
+      <Text style={styles.title_text}>
+        {text}
+      </Text>
+      {/* End Display Title Text */}
     </View>
   );
 }
 
+
+
+
+
+{/* Style Sheets */}
 const styles = StyleSheet.create({
   container: {
-    width: "90%",
-    height: 60,
-    backgroundColor: colors.title,
-    borderWidth: 1,
-    borderColor: "black",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: colors.titleBackground,
+    padding: 10,
     borderRadius: 10,
+    width: "100%",
+    alignItems: "center",
+    marginBottom: 20,
   },
-  text: {
-    fontSize: 30,
+  title_text: {
+    color: colors.textLight,
+    fontSize: 24,
     fontWeight: "bold",
-    color: "white",
   },
 });
