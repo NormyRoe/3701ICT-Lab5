@@ -1,7 +1,8 @@
 {/* Import libraries/Functions */}
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 {/* Import components from src folder */}
@@ -19,16 +20,36 @@ import {
   get_current_board, 
   get_game_status 
 } from '../datamodel/game';
+import { saveGameToStorage } from '../datamodel/savedata';
 
 
 
-export default function Home( {navigation}) {
+
+export default function Home( {navigation, route}) {
 
   // Setting the game state
   const [game, setGame] = useState(createNewGame());
 
   // Setting the state for when the Save popup is visible
   const [showSavePopup, setShowSavePopup] = useState(false);
+
+  // If a saved game was passed from LoadPage, load it into state
+  useEffect(() => {
+    if (route.params && route.params.loadedGame)
+    {
+      const saved = route.params.loadedGame;
+
+      // Rebuild the game object using the saved history and step
+      setGame({
+        history: saved.history,
+        step: saved.steps,
+        x_is_next: (saved.steps % 2 === 0)  // even steop = X's turn
+      });
+
+      // Clear the param so it doesn't reload on every render
+      navigation.setParams({ loadedGame: null });
+    }
+  }, [route.params]);
 
   // Determine status of the game
   const status = get_game_status(game);
@@ -125,10 +146,15 @@ export default function Home( {navigation}) {
   }
 
   // Function to confirm save
-  function confirmSave()
+  async function confirmSave()
   {
-    // TODO later
+    // Save the game
+    await saveGameToStorage(game, status);
+
+    // Close popup
     setShowSavePopup(false);
+
+    // Start new game
     setGame(createNewGame());
 
   }
@@ -139,6 +165,8 @@ export default function Home( {navigation}) {
     setShowSavePopup(false);
   }
 
+  
+  
 
   return (
     <View style={styles.container}>
@@ -193,7 +221,7 @@ export default function Home( {navigation}) {
             <TButton 
               text="Load" 
               size="small" 
-              onPress={() => {}} 
+              onPress={() => navigation.navigate("Load Page")} 
             />
             <TButton 
               text="Save" 
