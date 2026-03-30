@@ -41,6 +41,48 @@
  */
 function createAccount(accountName, openingBalance) {
   // your implementation here
+  // Ensure function works with or without "new"
+  if (!(this instanceof createAccount))
+  {
+    return new createAccount(accountName, openingBalance);
+  }
+
+  let balance = openingBalance;
+  const transactions = [
+    { action: "open", amount: openingBalance}
+  ];
+
+  this.deposit = function(amount) {
+    if (amount <= 0) return "Invalid amount";
+
+    balance += amount;
+
+    transactions.push({action: "deposit", amount: amount});
+
+    return "OK";
+  };
+
+  this.withdraw = function(amount) {
+    if (amount <= 0) return "Invalid amount";
+
+    if (amount > balance) {
+      return "Withdraw over balance";
+    }
+
+    balance -= amount;
+
+    transactions.push({action: "withdraw", amount: amount});
+
+    return "OK";
+  };
+
+  this.checkAccount = function() {
+    return {
+      transactions: [...transactions],
+      balance
+    };
+  };
+
 }
 
 /**
@@ -57,6 +99,48 @@ function createAccount(accountName, openingBalance) {
  */
 function Person(initialName, initialAge) {
   // your implementation here
+  // Private variables
+  let name = 
+      typeof initialName === "string" && initialName.length > 0
+      ? initialName.charAt(0).toUpperCase() + initialName.slice(1)
+      : initialName;
+  let age = initialAge;
+
+  if (!(this instanceof Person)) {
+    return new Person(initialName, initialAge);
+  }
+
+  // Getters
+  Object.defineProperty(this, "getName", {
+    get() {
+      return name;
+    }
+  });
+
+  Object.defineProperty(this, "getAge", {
+    get() {
+      return age;
+    }
+  });
+
+  // Setters
+  Object.defineProperty(this, "setName", {
+    set(newName) {
+      if (typeof newName === "string" && newName.length > 0) {
+        name = newName.charAt(0).toUpperCase() + newName.slice(1);
+      }
+    }
+  });
+
+  Object.defineProperty(this, "setAge", {
+    set(newAge) {
+      if (typeof newAge === "number" && newAge >= 0 && newAge <= 120) {
+        age = newAge;
+      } else {
+        console.log("Invalid age provided");
+      }
+    }
+  });
 }
 
 /**
@@ -92,10 +176,38 @@ function Person(initialName, initialAge) {
 
 class Car {
   // your implementation here
+  constructor(make, model, year)
+  {
+    this.make = make;
+    this.model = model;
+    this.year = year;
+  }
+
+  getInfo()
+  {
+    return `${this.make} ${this.model} ${this.year}`;
+  }
+
 }
 
 class ElectricCar extends Car {
   // your implementation here
+  constructor(make, model, year, battery)
+  {
+    super(make, model, year);
+    this.battery = battery;
+  }
+
+  getBatteryInfo()
+  {
+    return `Battery level at ${this.battery}%`;
+  }
+
+  getInfo()
+  {
+    return `${this.make} ${this.model} ${this.year} with ${this.battery}% battery`;
+  }
+  
 }
 
 /**
@@ -113,11 +225,24 @@ class ElectricCar extends Car {
 // Extending Array.prototype to include serialize method
 Array.prototype.serialize = function () {
   // your implementation here
+  return JSON.stringify(this);
 };
 
 // Extending Array.prototype to include deserialize method
 Array.prototype.deserialize = function (json) {
   // your implementation here
+  // Parse the JSON string into a temporary array
+  const parsed = JSON.parse(json);
+
+  // Clear the current array
+  this.length = 0;
+
+  // Push parsed elements into the existing array
+  for (let item of parsed)
+  {
+    this.push(item);
+  }
+
 };
 
 /**
@@ -141,6 +266,63 @@ Array.prototype.deserialize = function (json) {
 
 function createShoppingCart() {
   // your implementation here
+  const items =[];
+
+  return {
+    addItem(id, name, price)
+    {
+      const existing = items.find(item => item.id === id);
+
+      if (existing)
+      {
+        existing.quantity += 1;
+      }
+      else
+      {
+        items.push({id, name, price, quantity: 1});
+      }
+    },
+
+    removeItem(id)
+    {
+      const existing = items.find(item => item.id === id);
+
+      if (!existing) return;
+
+      existing.quantity -= 1;
+
+      if (existing.quantity <= 0)
+      {
+        const index = items.indexOf(existing);
+        items.splice(index, 1);
+      }
+    },
+
+    check()
+    {
+      return {
+        itemNumber: this.itemNumber,
+        total: this.totalPrice,
+        items: items.map(item => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity
+        }))
+      };
+    },
+
+    // Getters
+    get totalPrice()
+    {
+      return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    },
+
+    get itemNumber()
+    {
+      return items.reduce((sum, item) => sum + item.quantity, 0);
+    }
+  };
 }
 
 module.exports = {
